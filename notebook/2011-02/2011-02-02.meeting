@@ -1,0 +1,19 @@
+---
+from: 2011-2-2 3:05PM
+to: 2011-2-2 6:00PM
+
+attendance:
+  - Dylan
+  - Henrik
+  - Brandon
+  - Ian
+
+tasks:
+  - task: Finish adjustments to arm motor.
+    who: Henrik
+    done: true
+  - task: Work on stop motion film.
+    who: Ian
+    done: true
+  - task: Drill holes in sweeper and attach zip ties.
+  - taks: Double-check wires
