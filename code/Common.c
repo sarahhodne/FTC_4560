@@ -266,7 +266,7 @@ void sweeperOff()
  */
 void sweeperReverse()
 {
-  servo[servoSweeper] = 128;
+  servo[servoSweeper] = 0;
 }
 
 /**
