@@ -5,7 +5,7 @@
  */
 
 #include "JoystickDriver.c"
-#include "Common.c"
+#include "4560_Common.h"
 
 // The latest reading from the left joystick on controller 1
 float x_val, y_val;
