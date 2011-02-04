@@ -101,7 +101,7 @@ int scaleJoystick(int &yOrig, int nMaxPower = kMaximumPowerLevel)
     yScaled /= 127;
   }
 
-  // Sacle the results again if we are limiting the top end.
+  // Scale the results again if we are limiting the top end.
   // Note: Ignores bad parameter values.
   if (nMaxPower < kMaximumPowerLevel && nMaxPower > 0)
   {
