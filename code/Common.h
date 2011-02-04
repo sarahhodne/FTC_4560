@@ -4,21 +4,8 @@
  * Hodne is released under the MIT license (see the LICENSE file).
  */
 
-#ifndef __4560_COMMON_C__
-#define __4560_COMMON_C__
-
-// Setup the ports on the NXT.
-#pragma config(Hubs, S1, HTMotor, HTMotor, HTMotor, HTServo)
-#pragma config(Sensor, S2, sensorCompass, sensorI2CHiTechnicCompass)
-#pragma config(Sensor, S3, sensorIRSeeker, sensorHiTechnicIRSeeker1200)
-#pragma config(Motor, mtr_S1_C1_1, motorNW, tmotorNormal, openLoop)
-#pragma config(Motor, mtr_S1_C1_2, motorSW, tmotorNormal, openLoop)
-#pragma config(Motor, mtr_S1_C2_1, motorArm, tmotorNormal, openLoop, encoder)
-#pragma config(Motor, mtr_S1_C3_1, motorNE, tmotorNormal, openLoop)
-#pragma config(Motor, mtr_S1_C3_2, motorSE, tmotorNormal, openLoop)
-#pragma config(Servo, srvo_S1_C4_1, servoCompass, tServoStandard)
-#pragma config(Servo, srvo_S1_C4_2, servoScoop, tServoStandard)
-#pragma config(Servo, srvo_S1_C4_4, servoSweeper, tServoContinuousRotation)
+#ifndef __4560_COMMON_H__
+#define __4560_COMMON_H__
 
 #include "HTMC-driver.h"
 
@@ -312,4 +299,4 @@ void armStepUp()
   armStep(50, 100);
 }
 
-#endif // __4560_COMMON_C__
+#endif // __4560_COMMON_H__
