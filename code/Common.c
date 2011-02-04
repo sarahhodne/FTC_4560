@@ -230,6 +230,7 @@ bool turnToHeading(const int heading, const int speed=20)
       spin(0);
       return turnToHeading(heading, speed+10);
     }
+    lastReading = currentReading;
   }
   return true;
 }
