@@ -4,6 +4,7 @@
  * Hodne is released under the MIT license (see the LICENSE file).
  */
 
+
 #ifndef __4560_COMMON_H__
 #define __4560_COMMON_H__
 
@@ -13,12 +14,16 @@
 #define scoopServoUp 156
 #define scoopServoDown 31
 
+// Positions for the servo with the compass arm
+#define compassHolderUp 0
+#define compassHolderDown 20
+
 // Values for the TopHat positions
 #define TopHat_Idle -1
 #define TopHat_Up 0
 #define TopHat_Down 4
 
-float atan2(float xval, float yval)
+float atan2(float xVal, float yVal)
 {
   if (xVal > 0)
     return atan(yVal/xVal);
@@ -107,8 +112,8 @@ void compassSetup()
 {
   // This isn't implemented in ROBOTC yet, but when it is this will protect the
   // servo from trying to push the arm into a C-channel.
-  servoMinPos[servoCompass] = compassHolderUp;
-  servoMaxPos[servoCompass] = compassHolderDown;
+  //servoMinPos[servoCompass] = compassHolderUp;
+  //servoMaxPos[servoCompass] = compassHolderDown;
 }
 
 /**
@@ -121,12 +126,12 @@ void compassUp()
 
 /**
  * Rotate the compass holder to the "down" position.
- */
+ *//*
 void compassDown()
 {
-  servo[servoCompass] = compassHolderUp;
+  servo[servoCompass] = compassHolderDown;
 }
-
+*/
 /**
  * Cap an integer to be between -100 and 100.
  *
@@ -138,10 +143,12 @@ void compassDown()
  */
 int cap100(int value)
 {
-  if (value > 0)
-    return min(value, 100);
+  if (value > 100)
+    return 100;
+  else if (value < -100)
+    return -100;
   else
-    return max(value, -100);
+    return value;
 }
 
 /**
