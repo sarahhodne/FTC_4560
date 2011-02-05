@@ -190,7 +190,7 @@ void moveRobot(int speed, int angle)
  */
 void spin(int speed)
 {
-  setMotors(speed, speed, speed, speed);
+  setMotors(-speed, -speed, -speed, -speed);
 }
 
 /**
