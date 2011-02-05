@@ -39,6 +39,14 @@ float atan2(float xVal, float yVal)
     return 0; // Actually undefined
 }
 
+void setMotors(int mNEvalue, int mNWvalue, int mSWvalue, int mSEvalue)
+{
+  motor[motorNE] = mNEvalue;
+  motor[motorNW] = mNWvalue;
+  motor[motorSW] = mSWvalue;
+  motor[motorSE] = mSEvalue;
+}
+
 // True: Logarithmic scale. False: Linear scale.
 bool bUseLogarithmicScale = true;
 // Adjust to set max power level to be used.
@@ -157,22 +165,20 @@ int cap100(int value)
  * Hint: This function basically takes a velocity vector.
  *
  * @param speed The speed at which to move, or magnitude of vector.
- * @param angle The heading at which to move, or angle of vector.
+ * @param angle The heading at which to move, or angle of vector (in degrees).
  */
-void moveRobot(float speed, float angle)
+void moveRobot(int speed, int angle)
 {
-  // Initialize some variables we can use for debugging purposes.
-  int mNWvalue, mNEvalue, mSEvalue, mSWvalue;
-
   // Use cap100() to limit the joysticks to a circle, and then the robot won't
   // move faster when going at an angle (besides, the motors only go to 100).
   float x_value = cosDegrees(angle) * cap100(speed);
   float y_value = sinDegrees(angle) * cap100(speed);
 
-  motor[motorNW] = mNWvalue = (-x_value - y_value)/2;
-  motor[motorNE] = mNEvalue = (-x_value + y_value)/2;
-  motor[motorSE] = mSEvalue = (x_value + y_value)/2;
-  motor[motorSW] = mSWvalue = (x_value - y_value)/2;
+  setMotors(
+    -x_value + y_value, // NE
+    -x_value - y_value, // NW
+    x_value - y_value,  // SW
+    x_value + y_value); // SE
 }
 
 /**
@@ -184,7 +190,7 @@ void moveRobot(float speed, float angle)
  */
 void spin(int speed)
 {
-  motor[motorNW] = motor[motorNE] = motor[motorSE] = motor[motorSW] = speed;
+  setMotors(speed, speed, speed, speed);
 }
 
 /**
@@ -205,26 +211,14 @@ bool turnToHeading(const int heading, const int speed=20)
 
   int startAngle = lastReading = HTMCreadHeading(sensorCompass);
 
-  // The sign of this determines the direction to turn
-  // Negative: clockwise. Positive: counter-clockwise.
-  int direction = (((heading - startAngle) % 360) > 180) ? 1 : -1;
-
   numReadings = 0;
   while (heading != (currentReading = HTMCreadHeading(sensorCompass)))
   {
-    spin(20*heading);
+    // The sign of this determines the direction to turn
+    // Negative: clockwise. Positive: counter-clockwise.
+    int direction = (((heading - startAngle) % 360) > 180) ? 1 : -1;
+    spin(20*direction);
     wait10Msec(1); // To give it a chance to start moving.
-    if (currentReading == lastReading)
-      numReadings++;
-    else
-      numReadings = 0;
-    // We haven't moved in at least 60 msec.
-    if (numReadings > 5)
-    {
-      spin(0);
-      return turnToHeading(heading, speed+10);
-    }
-    lastReading = currentReading;
   }
   return true;
 }
@@ -237,7 +231,7 @@ bool turnToHeading(const int heading, const int speed=20)
  */
 bool turnDegrees(int angle)
 {
-  turnToHeading(HTMCreadHeading(sensorCompass)-angle);
+  return turnToHeading(HTMCreadHeading(sensorCompass)-angle);
 }
 
 /**

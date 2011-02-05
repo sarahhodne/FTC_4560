@@ -1,4 +1,5 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
+#pragma config(Sensor, S2,     sensorCompass,       sensorI2CHiTechnicCompass)
 #pragma config(Motor,  mtr_S1_C1_1,     motorNW,       tmotorNormal, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     motorSW,       tmotorNormal, openLoop)
 #pragma config(Motor,  mtr_S1_C2_1,     motorArm,      tmotorNormal, openLoop, encoder)
@@ -77,7 +78,7 @@ task drivingTask()
 
     if (x_val > 10 || x_val < -10 || y_val > 10 || y_val < -10)
       // We want to move
-      moveRobot(speedMagnitude, speedDirection);
+      moveRobot(cap100(speedMagnitude), speedDirection);
     else if (joystick.joy1_x2 > 10 || joystick.joy1_x2 < -10)
       // We want to spin
       spin(scaleJoystick(joystick.joy1_x2));
@@ -131,7 +132,7 @@ task main()
   waitForStart();
   aboutToStart();
   StartTask(drivingTask);
-  StartTask(armTask);
+  //StartTask(armTask);
 
   // So the program doesn't just exit.
   while (true)
