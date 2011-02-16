@@ -200,26 +200,33 @@ void spin(int speed)
  * @param speed The speed at which to spin (lower is more accurate).
  * @return Whether we successfully turned.
  */
-bool turnToHeading(const int heading, const int speed=20)
+bool turnToHeading(const int heading)
 {
   // To prevent us from getting stuck.
-  int currentReading, lastReading, numReadings;
+  int numReadings, direction, leftToTurn, speed;
 
-  // Too many retries
-  if (speed > 100)
-    return false;
+  int lastAngle = HTMCreadHeading(sensorCompass);
+  wait1Msec(50);
 
-  int startAngle = lastReading = HTMCreadHeading(sensorCompass);
-
-  numReadings = 0;
-  while (heading != (currentReading = HTMCreadHeading(sensorCompass)))
+  do
   {
-    // The sign of this determines the direction to turn
-    // Negative: clockwise. Positive: counter-clockwise.
-    int direction = (((heading - startAngle) % 360) > 180) ? 1 : -1;
-    spin(20*direction);
+    leftToTurn = (heading - lastAngle) % 360;
+    if (leftToTurn > 180)
+    {
+      direction = -1;
+      leftToTurn -= 180;
+    } else {
+      direction = 1;
+    }
+
+    speed = 12 + (leftToTurn/10.0);
+
+    spin(speed*direction);
     wait10Msec(1); // To give it a chance to start moving.
-  }
+
+    lastAngle = HTMCreadHeading(sensorCompass);
+    wait1Msec(50);
+  } while (heading != lastAngle);
   return true;
 }
 
@@ -239,7 +246,7 @@ bool turnDegrees(int angle)
  */
 void sweeperOn()
 {
-  servo[servoSweeper] = 255;
+  servo[servoSweeper] = 0;
 }
 
 /**
@@ -255,7 +262,7 @@ void sweeperOff()
  */
 void sweeperReverse()
 {
-  servo[servoSweeper] = 0;
+  servo[servoSweeper] = 255;
 }
 
 /**

@@ -42,6 +42,7 @@ int getAngle()
 void initializeRobot()
 {
   compassSetup();
+  servo[servoScoop] = 150;
 }
 
 /**
@@ -76,7 +77,7 @@ task drivingTask()
     // Angle part of a vector
     int speedDirection = getAngle();
 
-    if (x_val > 10 || x_val < -10 || y_val > 10 || y_val < -10)
+    if (x_val > 20 || x_val < -20 || y_val > 20 || y_val < -20)
       // We want to move
       moveRobot(cap100(speedMagnitude), speedDirection);
     else if (joystick.joy1_x2 > 10 || joystick.joy1_x2 < -10)
@@ -99,6 +100,7 @@ task drivingTask()
  */
 task armTask()
 {
+  servo[servoScoop] = scoopServoUp;
   while (true)
   {
     getJoystickSettings(joystick);
@@ -112,10 +114,14 @@ task armTask()
       armStepUp();
     if (joy2Btn(8))
       armStepDown();
+    if (joy2Btn(9))
+      servo[servoScoop] = ServoValue[servoScoop] + 5;
+    if (joy2Btn(10))
+      servo[servoScoop] = ServoValue[servoScoop] - 5;
     if (joystick.joy2_TopHat == TopHat_Up)
-      motor[motorArm] = 40;
+      motor[motorArm] = (joy2Btn(1) ? 100 : 40);
     if (joystick.joy2_TopHat == TopHat_Down)
-      motor[motorArm] = -40;
+      motor[motorArm] = (joy2Btn(1) ? -100 : -40);
     if (joystick.joy2_TopHat == TopHat_Idle)
       motor[motorArm] = 0;
   }
@@ -132,7 +138,7 @@ task main()
   waitForStart();
   aboutToStart();
   StartTask(drivingTask);
-  //StartTask(armTask);
+  StartTask(armTask);
 
   // So the program doesn't just exit.
   while (true)
