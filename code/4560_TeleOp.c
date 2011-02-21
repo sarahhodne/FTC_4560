@@ -17,11 +17,57 @@
  * Henrik Hodne is released under the MIT license (see the LICENSE file).
  */
 
+// This needs to be defined here to enable connection detection in
+// 4560_Common.h
+#define CONNECTION_DETECTION true
+bool kInFailureMode = false;
+
 #include "JoystickDriver.c"
 #include "4560_Common.h"
 
 // The latest reading from the left joystick on controller 1
 float x_val, y_val;
+
+void enterFailureMode()
+{
+  spin(0); // Easy way to setting all motors to 0.
+  stopSweeper();
+
+  // This will angle the compass arm at an angle to signify connection loss.
+  servo[servoCompass] = 128;
+}
+
+void exitFailureMode()
+{
+  compassUp(); // This will signify that connection is restored.
+}
+
+task checkConnectivity()
+{
+  int missedMessageCount = 0;
+  long lastMessageCount = 0;
+
+  while(true) {
+    if (ntotalMessageCount == lastMessageCount) {
+      // Increase this number if the robot seems to "jitter", or thinks it
+      // loses connection all the time. Decrease it if it takes too long to
+      // detect a lost connection.
+      if (++missedMessageCount > 500) {
+        enterFailureMode();
+        kInFailureMode = true;
+      }
+    }
+    else { // The total message count changed, we have a connection!
+      if (kInFailureMode)
+        exitFailureMode();
+
+      kInFailureMode = false;
+      missedMessageCount = 0;
+    }
+
+    lastMessageCount = ntotalMessageCount;
+  }
+}
 
 /**
  * Get the angle part of the left joystick and return it.
@@ -137,12 +183,12 @@ task main()
   initializeRobot();
   waitForStart();
   aboutToStart();
+  StartTask(checkConnectivity);
   StartTask(drivingTask);
   StartTask(armTask);
 
   // So the program doesn't just exit.
-  while (true)
-  {
+  while (true) {
     // We don't want to hog the CPU here...
     wait1Msec(5);
   }

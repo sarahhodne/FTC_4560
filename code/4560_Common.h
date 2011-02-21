@@ -41,6 +41,10 @@ float atan2(float xVal, float yVal)
 
 void setMotors(int mNEvalue, int mNWvalue, int mSWvalue, int mSEvalue)
 {
+#ifdef CONNECTION_DETECTION
+  if (kInFailureMode)
+    return;
+#endif
   motor[motorNE] = mNEvalue;
   motor[motorNW] = mNWvalue;
   motor[motorSW] = mSWvalue;
@@ -246,6 +250,10 @@ bool turnDegrees(int angle)
  */
 void sweeperOn()
 {
+#ifdef CONNECTION_DETECTION
+  if (kInFailureMode)
+    return;
+#endif
   servo[servoSweeper] = 0;
 }
 
@@ -254,6 +262,8 @@ void sweeperOn()
  */
 void sweeperOff()
 {
+  // We're not doing connection detection, since this is perfectly safe to do,
+  // even if we lost connection (we're stopping things, not starting things).
   servo[servoSweeper] = 128;
 }
 
@@ -262,6 +272,10 @@ void sweeperOff()
  */
 void sweeperReverse()
 {
+#ifdef CONNECTION_DETECTION
+  if (kInFailureMode)
+    return;
+#endif
   servo[servoSweeper] = 255;
 }
 
@@ -273,6 +287,11 @@ void sweeperReverse()
  */
 void armStep(int speed, int stepSize)
 {
+#ifdef CONNECTION_DETECTION
+  if (kInFailureMode)
+    return;
+#endif
+
   // Find out the direction to move.
   int direction = speed > 0 ? 1 : -1;
 
